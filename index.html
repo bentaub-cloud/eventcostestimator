@@ -426,6 +426,14 @@
           <input class="line-input" type="number" id="ice" value="200" min="0" oninput="update()">
           <span class="line-computed" id="ice-display">€200</span>
         </div>
+        <div class="line-item">
+          <div>
+            <div class="line-label">Corkage fee <span class="per-head-tag">per head</span></div>
+            <div class="line-note">€10/head quoted · varies by villa · zero if BYO free</div>
+          </div>
+          <input class="line-input" type="number" id="corkage-pp" value="10" min="0" oninput="update()">
+          <span class="line-computed" id="corkage-total">€900</span>
+        </div>
       </div>
     </div>
 
@@ -458,15 +466,6 @@
           <input class="line-input" type="number" id="pa" value="0" min="0" oninput="update()">
           <span class="line-computed" id="pa-display">€0</span>
         </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Gnawa / Dakka musicians</div>
-            <div class="line-note">Optional · €250 via 1001 Nuits (2×15min)</div>
-          </div>
-          <input class="line-input" type="number" id="gnawa" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="gnawa-display">€0</span>
-        </div>
-
         <div class="line-item">
           <div>
             <div class="line-label">Lighting / uplighters</div>
@@ -517,19 +516,11 @@
         </div>
         <div class="line-item">
           <div>
-            <div class="line-label">Event stylist / decorator fee</div>
-            <div class="line-note">Day-of coordination; zero if DIY</div>
+            <div class="line-label">Berber tent setup</div>
+            <div class="line-note">Rugs, poufs, braziers, lighting · €400 via 1001 Nuits</div>
           </div>
-          <input class="line-input" type="number" id="stylist" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="stylist-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Photo / video</div>
-            <div class="line-note">Photographer for the evening</div>
-          </div>
-          <input class="line-input" type="number" id="photo" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="photo-display">€0</span>
+          <input class="line-input" type="number" id="berber" value="0" min="0" oninput="update()">
+          <span class="line-computed" id="berber-display">€0</span>
         </div>
       </div>
     </div>
@@ -595,6 +586,14 @@
         </div>
       </div>
       <div class="card-body">
+        <div class="line-item">
+          <div>
+            <div class="line-label">Event fee <span class="per-head-tag">per head</span></div>
+            <div class="line-note">Varies by villa · €20–30pp typical · €300 flat seen · zero at some</div>
+          </div>
+          <input class="line-input" type="number" id="eventfee-pp" value="0" min="0" oninput="update()">
+          <span class="line-computed" id="eventfee-total">€0</span>
+        </div>
         <div class="line-item">
           <div>
             <div class="line-label">Door security (×1)</div>
@@ -712,7 +711,8 @@ function update() {
   const soft = g('soft-pp') * n;
   const barstaff = g('barstaff');
   const ice = g('ice');
-  const drinks = wine + spirits + beer + soft + barstaff + ice;
+  const corkage = g('corkage-pp') * n;
+  const drinks = wine + spirits + beer + soft + barstaff + ice + corkage;
 
   s('wine-total', fmt(wine));
   s('spirits-total', fmt(spirits));
@@ -720,6 +720,7 @@ function update() {
   s('soft-total', fmt(soft));
   s('barstaff-display', fmt(barstaff));
   s('ice-display', fmt(ice));
+  s('corkage-total', fmt(corkage));
   s('sub-drinks', fmt(drinks));
 
   // Bottle breakdowns — CDS price references (MAD → EUR at 10.8)
@@ -747,13 +748,11 @@ function update() {
   // MUSIC
   const dj = g('dj');
   const pa = g('pa');
-  const gnawa = g('gnawa');
   const lights = g('lighting');
-  const music = dj + pa + gnawa + lights;
+  const music = dj + pa + lights;
 
   s('dj-display', fmt(dj));
   s('pa-display', fmt(pa));
-  s('gnawa-display', fmt(gnawa));
   s('lighting-display', fmt(lights));
   s('sub-music', fmt(music));
 
@@ -761,15 +760,13 @@ function update() {
   const flowers = g('flowers');
   const candles = g('candles');
   const linens = g('linens');
-  const stylist = g('stylist');
-  const photo = g('photo');
-  const decor = flowers + candles + linens + stylist + photo;
+  const berber = g('berber');
+  const decor = flowers + candles + linens + berber;
 
   s('flowers-display', fmt(flowers));
   s('candles-display', fmt(candles));
   s('linens-display', fmt(linens));
-  s('stylist-display', fmt(stylist));
-  s('photo-display', fmt(photo));
+  s('berber-display', fmt(berber));
   s('sub-decor', fmt(decor));
 
   // TRANSPORT
@@ -786,12 +783,14 @@ function update() {
   s('sub-transport', fmt(transport));
 
   // MISC
+  const eventfee = g('eventfee-pp') * n;
   const security = g('security');
   const softbar = g('softbar');
   const photobooth = g('photobooth');
   const contingency = g('contingency');
-  const misc = security + softbar + photobooth + contingency;
+  const misc = eventfee + security + softbar + photobooth + contingency;
 
+  s('eventfee-total', fmt(eventfee));
   s('security-display', fmt(security));
   s('softbar-display', fmt(softbar));
   s('photobooth-display', fmt(photobooth));
