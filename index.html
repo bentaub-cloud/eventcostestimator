@@ -651,6 +651,32 @@
         <span class="summary-row-label" style="color:var(--text)">Total</span>
         <span class="summary-row-val" style="color:var(--gold-light);font-size:15px" id="sr-total">€0</span>
       </div>
+
+      <div class="summary-divider" style="margin-top:8px"></div>
+
+      <!-- CONTRIBUTION -->
+      <div style="margin-top:10px">
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Guest Contribution</div>
+        <div class="summary-row" style="align-items:center;gap:8px">
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span class="summary-row-label">Amount per guest</span>
+            <span style="font-size:9px;color:var(--text-dim);opacity:0.6">Applied to all <span id="contrib-guest-count">90</span> guests</span>
+          </div>
+          <input type="number" id="contrib-pp" value="0" min="0"
+            style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:80px;text-align:right;"
+            oninput="update()">
+        </div>
+        <div class="summary-row" style="margin-top:6px">
+          <span class="summary-row-label" style="color:var(--text-dim)">Total contribution</span>
+          <span class="summary-row-val" style="color:var(--green)" id="sr-contrib">€0</span>
+        </div>
+        <div class="summary-divider" style="margin-top:8px"></div>
+        <div class="summary-row" style="margin-top:8px">
+          <span class="summary-row-label" style="color:var(--text);font-size:13px">Net cost to hosts</span>
+          <span id="sr-net" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold-light)">€0</span>
+        </div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:4px;text-align:right" id="sr-net-perhost">— per host (3 of you)</div>
+      </div>
     </div>
 
     <div class="confidence-bar"><div class="confidence-fill" id="conf-fill" style="width:60%"></div></div>
@@ -800,9 +826,16 @@ function update() {
   // TOTALS
   const total = food + drinks + music + decor + transport + misc;
   const perHead = total / n;
+  const contrib = g('contrib-pp') * n;
+  const net = Math.max(0, total - contrib);
+  const perHost = net / 3;
 
   s('total-display', fmt(total));
   s('per-head-display', fmt(perHead));
+  s('contrib-guest-count', n);
+  s('sr-contrib', fmt(contrib));
+  s('sr-net', fmt(net));
+  s('sr-net-perhost', contrib > 0 ? `${fmt(perHost)} per host (3 of you)` : '— per host (3 of you)');
 
   // Summary rows
   const rows = [
