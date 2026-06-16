@@ -3,277 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Marrakech Event Cost Estimator</title>
+<title>The Big 50 · Cost Estimator</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0f0d0a;
-    --surface: #1a1712;
-    --border: #2e2a24;
-    --gold: #c9a84c;
-    --gold-light: #e8c97a;
-    --gold-dim: #7a6430;
-    --text: #f0ead8;
-    --text-dim: #8a8070;
-    --red: #c45c3a;
-    --green: #5a9e6f;
-    --accent: #d4826a;
+    --bg: #0f0d0a; --surface: #1a1712; --surface2: #201d18;
+    --border: #2e2a24; --gold: #c9a84c; --gold-light: #e8c97a;
+    --gold-dim: #7a6430; --text: #f0ead8; --text-dim: #8a8070;
+    --red: #c45c3a; --green: #5a9e6f; --accent: #d4826a;
+    --madero: #4a9fd4; --madero-dim: #1e3f57;
+    --marco: #c9844c; --marco-dim: #5a3a1e;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Mono', monospace; min-height: 100vh; padding: 40px 20px 60px; }
+  header { text-align: center; margin-bottom: 40px; }
+  header::before { content:''; display:block; width:1px; height:40px; background:var(--gold-dim); margin:0 auto 24px; }
+  .eyebrow { font-size:10px; letter-spacing:4px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  h1 { font-family:'Playfair Display',serif; font-size:clamp(28px,5vw,52px); font-weight:400; line-height:1.1; }
+  h1 em { font-style:italic; color:var(--gold); }
+  .subtitle { margin-top:12px; font-size:11px; color:var(--text-dim); letter-spacing:1px; }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    min-height: 100vh;
-    padding: 40px 20px 60px;
+  /* VILLA COMPARE TABS */
+  .villa-wrap { max-width:1200px; margin:0 auto 24px; }
+  .villa-tabs { display:grid; grid-template-columns:1fr 1fr; border:1px solid var(--border); overflow:hidden; }
+  .villa-tab {
+    padding:20px 24px; cursor:pointer; background:var(--surface); color:var(--text-dim);
+    font-family:'DM Mono',monospace; font-size:11px; text-align:left;
+    border:none; border-bottom:3px solid transparent; position:relative; transition:all 0.2s;
   }
+  .villa-tab:first-child { border-right:1px solid var(--border); }
+  .villa-tab.sel-madero { background:var(--surface2); border-bottom-color:var(--madero); }
+  .villa-tab.sel-marco  { background:var(--surface2); border-bottom-color:var(--marco); }
+  .vtab-badge { position:absolute; top:12px; right:14px; font-size:8px; letter-spacing:2px; text-transform:uppercase; padding:2px 7px; border-radius:2px; }
+  .sel-madero .vtab-badge { background:var(--madero-dim); color:var(--madero); }
+  .sel-marco  .vtab-badge { background:var(--marco-dim);  color:var(--marco); }
+  .villa-tab:not(.sel-madero):not(.sel-marco) .vtab-badge { background:var(--border); color:var(--text-dim); }
+  .vtab-name { font-family:'Playfair Display',serif; font-size:20px; display:block; margin-bottom:3px; }
+  .sel-madero .vtab-name { color:var(--madero); }
+  .sel-marco  .vtab-name { color:var(--marco); }
+  .vtab-dates { font-size:10px; color:var(--text-dim); display:block; margin-bottom:8px; }
+  .vtab-price { font-family:'Playfair Display',serif; font-size:26px; color:var(--gold-light); display:block; margin-bottom:8px; }
+  .vtab-inc { font-size:10px; color:var(--text-dim); line-height:1.8; }
+  .vtab-inc i { display:block; padding-left:14px; position:relative; }
+  .vtab-inc i::before { position:absolute; left:0; }
+  .vtab-inc i.yes::before { content:'✓'; color:var(--green); }
+  .vtab-inc i.opt::before { content:'+'; color:var(--gold-dim); }
+  .vtab-inc i.no::before  { content:'—'; color:var(--text-dim); }
 
-  header {
-    text-align: center;
-    margin-bottom: 48px;
-    position: relative;
-  }
+  /* LAYOUT */
+  .layout { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
+  .controls-col { display:flex; flex-direction:column; gap:20px; }
 
-  header::before {
-    content: '';
-    display: block;
-    width: 1px;
-    height: 40px;
-    background: var(--gold-dim);
-    margin: 0 auto 24px;
-  }
+  /* GLOBAL BAR */
+  .global-bar { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--gold); padding:20px 24px; display:flex; gap:28px; align-items:center; flex-wrap:wrap; }
+  .gf { display:flex; flex-direction:column; gap:6px; }
+  .gf label { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); }
+  .gf input[type=range] { width:150px; accent-color:var(--gold); }
+  .gf select { background:var(--bg); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:13px; padding:6px 10px; cursor:pointer; }
+  .vd { font-size:18px; font-family:'Playfair Display',serif; color:var(--gold-light); }
 
-  .eyebrow {
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 12px;
-  }
+  /* CARDS */
+  .card { background:var(--surface); border:1px solid var(--border); overflow:hidden; transition:border-color 0.2s; }
+  .card:hover { border-color:var(--gold-dim); }
+  .card-head { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+  .card-head-l { display:flex; align-items:center; gap:12px; }
+  .card-icon { font-size:16px; }
+  .card-title { font-size:11px; letter-spacing:2px; text-transform:uppercase; }
+  .card-toggle { font-size:10px; color:var(--text-dim); transition:transform 0.2s; }
+  .card.collapsed .card-toggle { transform:rotate(-90deg); }
+  .card-sub { font-family:'Playfair Display',serif; font-size:17px; color:var(--gold); }
+  .card-body { padding:16px 20px; display:flex; flex-direction:column; gap:13px; }
+  .card.collapsed .card-body { display:none; }
 
-  h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(28px, 5vw, 52px);
-    font-weight: 400;
-    color: var(--text);
-    line-height: 1.1;
-  }
+  /* DAY HEADERS */
+  .day-head { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold-dim); padding-bottom:7px; border-bottom:1px solid var(--border); margin-top:4px; }
 
-  h1 em {
-    font-style: italic;
-    color: var(--gold);
-  }
+  /* LINE ITEMS */
+  .li { display:grid; grid-template-columns:1fr auto auto; gap:12px; align-items:center; }
+  .ll { font-size:12px; color:var(--text-dim); }
+  .ln { font-size:10px; color:var(--text-dim); opacity:0.6; }
+  .linput { background:var(--bg); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:13px; padding:5px 8px; width:90px; text-align:right; }
+  .linput:focus { outline:1px solid var(--gold-dim); border-color:var(--gold-dim); }
+  .linput:disabled { opacity:0.3; cursor:not-allowed; }
+  .lc { font-size:13px; color:var(--text-dim); width:80px; text-align:right; }
+  .lc.hi { color:var(--gold-light); }
+  .lc.incl { color:var(--green); font-size:11px; }
+  .ph { font-size:9px; background:var(--gold-dim); color:var(--gold-light); padding:2px 5px; border-radius:2px; letter-spacing:1px; vertical-align:middle; margin-left:4px; }
+  .vg { font-size:9px; background:var(--border); color:var(--text-dim); padding:2px 5px; border-radius:2px; letter-spacing:1px; vertical-align:middle; margin-left:4px; }
+  .divider { height:1px; background:var(--border); margin:2px 0; }
+  .btl { font-size:10px; color:var(--gold-dim); padding:3px 0 1px; letter-spacing:0.5px; line-height:1.5; }
+  .btl span { color:var(--gold); }
 
-  .subtitle {
-    margin-top: 12px;
-    font-size: 11px;
-    color: var(--text-dim);
-    letter-spacing: 1px;
-  }
+  /* SUMMARY */
+  .summary { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--gold); position:sticky; top:20px; }
+  .sum-head { padding:20px 24px 16px; border-bottom:1px solid var(--border); }
+  .sum-ey { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .sum-total { font-family:'Playfair Display',serif; font-size:38px; color:var(--gold-light); line-height:1; }
+  .sum-sub { font-size:11px; color:var(--text-dim); margin-top:6px; }
+  .sum-rows { padding:14px 24px; display:flex; flex-direction:column; gap:7px; }
+  .sr { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .sr-l { font-size:11px; color:var(--text-dim); }
+  .sr-v { font-size:13px; color:var(--text); }
+  .sr.zero .sr-v { color:var(--border); }
+  .sdiv { height:1px; background:var(--border); margin:3px 0; }
 
-  .layout {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 24px;
-    align-items: start;
-  }
+  /* VILLA COMPARISON BOX */
+  .vc-box { margin:0 24px 14px; border:1px solid var(--border); overflow:hidden; }
+  .vc-title { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); padding:9px 14px; border-bottom:1px solid var(--border); background:var(--bg); }
+  .vc-row { display:flex; justify-content:space-between; align-items:center; padding:11px 14px; border-bottom:1px solid var(--border); transition:background 0.15s; }
+  .vc-row:last-child { border-bottom:none; }
+  .vc-row.active { background:var(--surface2); }
+  .vc-name { font-size:12px; font-family:'Playfair Display',serif; }
+  .vc-name.m { color:var(--madero); }
+  .vc-name.k { color:var(--marco); }
+  .vc-detail { font-size:9px; color:var(--text-dim); margin-top:2px; }
+  .vc-save { font-size:10px; color:var(--green); margin-top:3px; }
+  .vc-amt { font-family:'Playfair Display',serif; font-size:19px; color:var(--gold-light); text-align:right; }
+  .vc-net { font-size:10px; color:var(--text-dim); margin-top:2px; text-align:right; }
+  .apill { font-size:8px; letter-spacing:1px; text-transform:uppercase; background:var(--gold-dim); color:var(--gold); padding:2px 5px; border-radius:2px; margin-left:6px; vertical-align:middle; }
 
-  .controls-col { display: flex; flex-direction: column; gap: 20px; }
+  /* NET BLOCK */
+  .net-block { padding:0 24px 16px; }
+  .net-ey { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .net-row { display:flex; justify-content:space-between; align-items:baseline; }
+  .net-total { font-family:'Playfair Display',serif; font-size:28px; color:var(--gold-light); }
+  .net-perhost { font-size:10px; color:var(--text-dim); }
 
-  /* GLOBAL CONTROLS */
-  .global-bar {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 2px solid var(--gold);
-    padding: 20px 24px;
-    display: flex;
-    gap: 32px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
+  .conf-bar { margin:0 24px 18px; background:var(--bg); border:1px solid var(--border); height:4px; border-radius:2px; overflow:hidden; }
+  .conf-fill { height:100%; background:var(--green); transition:width 0.4s; border-radius:2px; }
+  .notes { padding:14px 24px; border-top:1px solid var(--border); }
+  .notes-t { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-dim); margin-bottom:9px; }
+  .note { font-size:10px; color:var(--text-dim); line-height:1.6; margin-bottom:5px; padding-left:12px; position:relative; }
+  .note::before { content:'—'; position:absolute; left:0; color:var(--gold-dim); }
 
-  .global-field { display: flex; flex-direction: column; gap: 6px; }
-  .global-field label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
-  .global-field input[type=range] { width: 180px; accent-color: var(--gold); }
-  .global-field select {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-  .val-display {
-    font-size: 20px;
-    font-family: 'Playfair Display', serif;
-    color: var(--gold-light);
-  }
-
-  /* CATEGORY CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 0;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  .card:hover { border-color: var(--gold-dim); }
-
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    user-select: none;
-  }
-  .card-header-left { display: flex; align-items: center; gap: 12px; }
-  .card-icon { font-size: 16px; }
-  .card-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text); }
-  .card-toggle { font-size: 10px; color: var(--text-dim); transition: transform 0.2s; }
-  .card.collapsed .card-toggle { transform: rotate(-90deg); }
-  .card-subtotal {
-    font-family: 'Playfair Display', serif;
-    font-size: 17px;
-    color: var(--gold);
-  }
-
-  .card-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 14px; }
-  .card.collapsed .card-body { display: none; }
-
-  .line-item {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 12px;
-    align-items: center;
-  }
-  .line-label { font-size: 12px; color: var(--text-dim); }
-  .line-note { font-size: 10px; color: var(--text-dim); opacity: 0.6; }
-  .line-input {
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    padding: 5px 8px;
-    width: 90px;
-    text-align: right;
-  }
-  .line-input:focus { outline: 1px solid var(--gold-dim); border-color: var(--gold-dim); }
-  .line-computed {
-    font-size: 13px;
-    color: var(--text-dim);
-    width: 80px;
-    text-align: right;
-  }
-  .line-computed.highlighted { color: var(--gold-light); }
-
-  .per-head-tag {
-    font-size: 9px;
-    background: var(--gold-dim);
-    color: var(--gold-light);
-    padding: 2px 5px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    vertical-align: middle;
-    margin-left: 4px;
-  }
-
-  .divider { height: 1px; background: var(--border); margin: 4px 0; }
-
-  /* TOGGLE switches */
-  .toggle-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-  }
-  .toggle-label-wrap { display: flex; flex-direction: column; gap: 2px; }
-  .toggle-label { font-size: 12px; color: var(--text-dim); }
-  .toggle-sublabel { font-size: 10px; color: var(--text-dim); opacity: 0.5; }
-  .switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
-  .switch input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; cursor: pointer; inset: 0;
-    background: var(--border); border-radius: 20px;
-    transition: background 0.2s;
-  }
-  .slider:before {
-    content: ''; position: absolute;
-    width: 14px; height: 14px; left: 3px; bottom: 3px;
-    background: var(--text-dim); border-radius: 50%;
-    transition: transform 0.2s, background 0.2s;
-  }
-  input:checked + .slider { background: var(--gold-dim); }
-  input:checked + .slider:before { transform: translateX(16px); background: var(--gold); }
-
-  /* SUMMARY PANEL */
-  .summary {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-top: 2px solid var(--gold);
-    position: sticky;
-    top: 20px;
-  }
-
-  .summary-header {
-    padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .summary-eyebrow { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
-  .summary-total {
-    font-family: 'Playfair Display', serif;
-    font-size: 40px;
-    color: var(--gold-light);
-    line-height: 1;
-  }
-  .summary-per-head { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
-
-  .summary-rows { padding: 16px 24px; display: flex; flex-direction: column; gap: 8px; }
-  .summary-row { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-  .summary-row-label { font-size: 11px; color: var(--text-dim); }
-  .summary-row-val { font-size: 13px; color: var(--text); }
-  .summary-row.zero .summary-row-val { color: var(--border); }
-  .summary-divider { height: 1px; background: var(--border); margin: 4px 0; }
-
-  .confidence-bar {
-    margin: 0 24px 20px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    height: 4px;
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .confidence-fill { height: 100%; background: var(--green); transition: width 0.4s; border-radius: 2px; }
-
-  .notes-section {
-    padding: 16px 24px;
-    border-top: 1px solid var(--border);
-  }
-  .notes-title { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 10px; }
-  .note { font-size: 10px; color: var(--text-dim); line-height: 1.6; margin-bottom: 6px; padding-left: 12px; position: relative; }
-  .note::before { content: '—'; position: absolute; left: 0; color: var(--gold-dim); }
-
-  .currency-label { font-size: 11px; color: var(--text-dim); font-family: 'DM Mono', monospace; }
-
-  .bottle-breakdown {
-    font-size: 10px;
-    color: var(--gold-dim);
-    padding: 4px 0 2px 0;
-    letter-spacing: 0.5px;
-    line-height: 1.5;
-  }
-  .bottle-breakdown span { color: var(--gold); }
-
-  @media (max-width: 780px) {
-    .layout { grid-template-columns: 1fr; }
-    .summary { position: static; }
+  @media(max-width:860px){
+    .layout { grid-template-columns:1fr; }
+    .summary { position:static; }
+    .villa-tabs { grid-template-columns:1fr; }
+    .villa-tab:first-child { border-right:none; border-bottom:1px solid var(--border); }
   }
 </style>
 </head>
@@ -282,559 +149,532 @@
 <header>
   <div class="eyebrow">The Big 50 · Marrakech · October 2026</div>
   <h1>Event Cost <em>Estimator</em></h1>
-  <p class="subtitle">Costs beyond the villa hire · Adjust to your plans</p>
+  <p class="subtitle">All costs beyond villa hire · Switch villas to compare</p>
 </header>
 
+<div class="villa-wrap">
+  <div class="villa-tabs">
+    <button class="villa-tab sel-madero" id="tab-madero" onclick="setVilla('madero')">
+      <span class="vtab-badge">Selected</span>
+      <span class="vtab-name">Villa Mãdero</span>
+      <span class="vtab-dates">The Atlas House · 2–5 Oct 2026</span>
+      <span class="vtab-price">€6,600</span>
+      <div class="vtab-inc">
+        <i class="yes">3 nights · 22 rooms · 44 pax</i>
+        <i class="yes">Breakfast included</i>
+        <i class="yes">BYO alcohol · no corkage</i>
+        <i class="yes">No event supplement</i>
+        <i class="opt">Lunch/Dinner buffet: €30pp (optional)</i>
+        <i class="opt">Extra beds: €30/night</i>
+      </div>
+    </button>
+    <button class="villa-tab" id="tab-marco" onclick="setVilla('marco')">
+      <span class="vtab-badge">Alternative</span>
+      <span class="vtab-name">Villa Marco</span>
+      <span class="vtab-dates">Exclusives Horizons · 9–12 Oct 2026</span>
+      <span class="vtab-price">€13,408</span>
+      <div class="vtab-inc">
+        <i class="yes">3 nights · 23 rooms · 46 pax</i>
+        <i class="yes">Breakfast incl. (€10pp × 46 × 3)</i>
+        <i class="yes">BYO alcohol · no corkage</i>
+        <i class="yes">Outdoor licence until 2am (€450)</i>
+        <i class="yes">Sunday BBQ incl. (€18 × 46)</i>
+        <i class="no">Lunches/Dinners: TBC on site</i>
+      </div>
+    </button>
+  </div>
+</div>
+
 <div class="layout">
-  <div class="controls-col">
+<div class="controls-col">
 
-    <!-- GLOBAL -->
-    <div class="global-bar">
-      <div class="global-field">
-        <label>Guests</label>
-        <input type="range" id="guests" min="60" max="130" value="100" step="5" oninput="update()">
-        <span class="val-display"><span id="guests-val">100</span> guests</span>
-      </div>
-      <div class="global-field">
-        <label>Villa Guests</label>
-        <input type="range" id="villa-guests" min="10" max="40" value="20" step="2" oninput="update()">
-        <span class="val-display"><span id="villa-guests-val">20</span> staying</span>
-      </div>
-      <div class="global-field">
-        <label>Currency</label>
-        <select id="currency" onchange="update()">
-          <option value="EUR">€ EUR</option>
-          <option value="GBP">£ GBP</option>
-          <option value="MAD">MAD</option>
-        </select>
-      </div>
+  <!-- GLOBAL -->
+  <div class="global-bar">
+    <div class="gf">
+      <label>Party Guests</label>
+      <input type="range" id="guests" min="60" max="130" value="100" step="5" oninput="update()">
+      <span class="vd"><span id="guests-val">100</span> guests</span>
     </div>
-
-    <!-- FOOD -->
-    <div class="card" id="card-food">
-      <div class="card-header" onclick="toggleCard('food')">
-        <div class="card-header-left">
-          <span class="card-icon">🍽</span>
-          <span class="card-title">Food &amp; Catering</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-food">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="line-item">
-          <div>
-            <div class="line-label">Saturday buffet <span class="per-head-tag">per head</span></div>
-            <div class="line-note">All 100 guests · External caterer · Moroccan feast style</div>
-          </div>
-          <input class="line-input" type="number" id="buffet-pp" value="25" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="buffet-total">€2,250</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Canapés / welcome bites <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Arrival drinks nibbles</div>
-          </div>
-          <input class="line-input" type="number" id="canapes-pp" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="canapes-total">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Breakfast <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Villa guests only · <span id="villa-guests-food">20</span> staying</div>
-          </div>
-          <input class="line-input" type="number" id="breakfast-pp" value="60" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="breakfast-total">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Lunch <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Villa guests only · <span id="villa-guests-food2">20</span> staying</div>
-          </div>
-          <input class="line-input" type="number" id="lunch-pp" value="60" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="lunch-total">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Dinner <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Villa guests only · <span id="villa-guests-food3">20</span> staying</div>
-          </div>
-          <input class="line-input" type="number" id="dinner-pp" value="60" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="dinner-total">€0</span>
-        </div>
-      </div>
+    <div class="gf">
+      <label>Villa Guests</label>
+      <input type="range" id="villa-guests" min="30" max="60" value="46" step="2" oninput="update()">
+      <span class="vd"><span id="villa-guests-val">46</span> staying</span>
     </div>
-
-    <!-- DRINKS -->
-    <div class="card" id="card-drinks">
-      <div class="card-header" onclick="toggleCard('drinks')">
-        <div class="card-header-left">
-          <span class="card-icon">🍾</span>
-          <span class="card-title">Alcohol &amp; Bar</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-drinks">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <!-- WINE -->
-        <div class="line-item">
-          <div>
-            <div class="line-label">Wine spend <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Moroccan labels (Baccari, Tandem, CB…)</div>
-          </div>
-          <input class="line-input" type="number" id="wine-pp" value="10" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="wine-total">€900</span>
-        </div>
-        <div class="bottle-breakdown" id="wine-breakdown"></div>
-
-        <!-- SPIRITS -->
-        <div class="line-item" style="margin-top:10px">
-          <div>
-            <div class="line-label">Spirits spend <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Gin, vodka, rum, whisky</div>
-          </div>
-          <input class="line-input" type="number" id="spirits-pp" value="10" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="spirits-total">€1,000</span>
-        </div>
-        <div class="bottle-breakdown" id="spirits-breakdown"></div>
-
-        <!-- BEER -->
-        <div class="line-item" style="margin-top:10px">
-          <div>
-            <div class="line-label">Beer spend <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Flag Special Gold / Casablanca (CDS prices)</div>
-          </div>
-          <input class="line-input" type="number" id="beer-pp" value="5" min="0" oninput="update()">
-          <span class="line-computed highlighted" id="beer-total">€500</span>
-        </div>
-        <div class="bottle-breakdown" id="beer-breakdown"></div>
-
-        <!-- SOFTS -->
-        <div class="line-item" style="margin-top:10px">
-          <div>
-            <div class="line-label">Soft drinks &amp; mixers <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Tonic, juice, water, cola</div>
-          </div>
-          <input class="line-input" type="number" id="soft-pp" value="4" min="0" oninput="update()">
-          <span class="line-computed" id="soft-total">€400</span>
-        </div>
-        <div class="divider"></div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Bar staff (×2 bartenders)</div>
-            <div class="line-note">Full evening incl. setup/breakdown</div>
-          </div>
-          <input class="line-input" type="number" id="barstaff" value="500" min="0" oninput="update()">
-          <span class="line-computed" id="barstaff-display">€500</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Ice, garnishes, cups</div>
-            <div class="line-note">Ice machine rental or bags</div>
-          </div>
-          <input class="line-input" type="number" id="ice" value="200" min="0" oninput="update()">
-          <span class="line-computed" id="ice-display">€200</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Corkage fee <span class="per-head-tag">per head</span></div>
-            <div class="line-note">€10/head quoted · varies by villa · zero if BYO free</div>
-          </div>
-          <input class="line-input" type="number" id="corkage-pp" value="10" min="0" oninput="update()">
-          <span class="line-computed" id="corkage-total">€900</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MUSIC -->
-    <div class="card" id="card-music">
-      <div class="card-header" onclick="toggleCard('music')">
-        <div class="card-header-left">
-          <span class="card-icon">🎵</span>
-          <span class="card-title">Music &amp; Entertainment</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-music">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="line-item">
-          <div>
-            <div class="line-label">DJ (main night)</div>
-            <div class="line-note">Friends DJing · €700 if hiring via 1001 Nuits</div>
-          </div>
-          <input class="line-input" type="number" id="dj" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="dj-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">PA / sound system hire</div>
-            <div class="line-note">Borrowed · 1001 Nuits sound system rental if needed</div>
-          </div>
-          <input class="line-input" type="number" id="pa" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="pa-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Lighting / uplighters</div>
-            <div class="line-note">Event lighting hire for outdoor space</div>
-          </div>
-          <input class="line-input" type="number" id="lighting" value="500" min="0" oninput="update()">
-          <span class="line-computed" id="lighting-display">€500</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- DECOR -->
-    <div class="card" id="card-decor">
-      <div class="card-header" onclick="toggleCard('decor')">
-        <div class="card-header-left">
-          <span class="card-icon">🌿</span>
-          <span class="card-title">Decoration &amp; Styling</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-decor">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="line-item">
-          <div>
-            <div class="line-label">Table linens &amp; crockery hire</div>
-            <div class="line-note">If not included with caterer</div>
-          </div>
-          <input class="line-input" type="number" id="linens" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="linens-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Decorate indoor room</div>
-            <div class="line-note">Rugs, poufs, draping, lighting · overnight continuation space</div>
-          </div>
-          <input class="line-input" type="number" id="berber" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="berber-display">€0</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- TRANSPORT -->
-    <div class="card" id="card-transport">
-      <div class="card-header" onclick="toggleCard('transport')">
-        <div class="card-header-left">
-          <span class="card-icon">🚌</span>
-          <span class="card-title">Transport &amp; Transfers</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-transport">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="line-item">
-          <div>
-            <div class="line-label">Full day car hire (×1)</div>
-            <div class="line-note">€250 per vehicle · full day</div>
-          </div>
-          <input class="line-input" type="number" id="airport-in" value="250" min="0" oninput="update()">
-          <span class="line-computed" id="airport-in-display">€250</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Party night shuttle (evening pkg)</div>
-            <div class="line-note">17-seat van full evening (7pm–3am) = €240 each</div>
-          </div>
-          <input class="line-input" type="number" id="party-transport" value="480" min="0" oninput="update()">
-          <span class="line-computed" id="party-transport-display">€480</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Daytime excursion transport</div>
-            <div class="line-note">Optional group trip · Sat daytime</div>
-          </div>
-          <input class="line-input" type="number" id="medina-trip" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="medina-trip-display">€0</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- MISC -->
-    <div class="card" id="card-misc">
-      <div class="card-header" onclick="toggleCard('misc')">
-        <div class="card-header-left">
-          <span class="card-icon">⚡</span>
-          <span class="card-title">Logistics &amp; Contingency</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:16px">
-          <span class="card-subtotal" id="sub-misc">€0</span>
-          <span class="card-toggle">▾</span>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="line-item">
-          <div>
-            <div class="line-label">Event fee <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Varies by villa · €20–30pp typical · €300 flat seen · zero at some</div>
-          </div>
-          <input class="line-input" type="number" id="eventfee-pp" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="eventfee-total">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Door security (×1)</div>
-            <div class="line-note">Optional · 1 person on entrance if needed</div>
-          </div>
-          <input class="line-input" type="number" id="security" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="security-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Soft drinks open bar</div>
-            <div class="line-note">Water, sodas, tea, coffee · €10/day/person (1001 Nuits rate)</div>
-          </div>
-          <input class="line-input" type="number" id="softbar" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="softbar-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Contingency (unforeseen)</div>
-            <div class="line-note">Recommended: 8–10% of total</div>
-          </div>
-          <input class="line-input" type="number" id="contingency" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="contingency-display">€0</span>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /controls-col -->
-
-  <!-- SUMMARY PANEL -->
-  <div class="summary">
-    <div class="summary-header">
-      <div class="summary-eyebrow">Total Event Costs</div>
-      <div class="summary-total"><span id="total-display">€0</span></div>
-      <div class="summary-per-head"><span id="per-head-display">—</span> per guest · excl. villa hire</div>
-    </div>
-
-    <div class="summary-rows" id="summary-rows">
-      <div class="summary-row" id="sr-food"><span class="summary-row-label">🍽 Food &amp; Catering</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-row" id="sr-drinks"><span class="summary-row-label">🍾 Alcohol &amp; Bar</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-row" id="sr-music"><span class="summary-row-label">🎵 Music &amp; Entertainment</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-row" id="sr-decor"><span class="summary-row-label">🌿 Decoration &amp; Styling</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-row" id="sr-transport"><span class="summary-row-label">🚌 Transport</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-row" id="sr-misc"><span class="summary-row-label">⚡ Logistics &amp; Contingency</span><span class="summary-row-val">€0</span></div>
-      <div class="summary-divider"></div>
-      <div class="summary-row" style="font-size:13px">
-        <span class="summary-row-label" style="color:var(--text)">Total</span>
-        <span class="summary-row-val" style="color:var(--gold-light);font-size:15px" id="sr-total">€0</span>
-      </div>
-
-      <div class="summary-divider" style="margin-top:8px"></div>
-
-      <!-- CONTRIBUTION -->
-      <div style="margin-top:10px">
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Guest Contribution</div>
-        <div class="summary-row" style="align-items:center;gap:8px">
-          <div style="display:flex;flex-direction:column;gap:3px">
-            <span class="summary-row-label">Amount per guest</span>
-            <span style="font-size:9px;color:var(--text-dim);opacity:0.6">Applied to all <span id="contrib-guest-count">90</span> guests</span>
-          </div>
-          <input type="number" id="contrib-pp" value="0" min="0"
-            style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:80px;text-align:right;"
-            oninput="update()">
-        </div>
-        <div class="summary-row" style="margin-top:6px">
-          <span class="summary-row-label" style="color:var(--text-dim)">Total contribution</span>
-          <span class="summary-row-val" style="color:var(--green)" id="sr-contrib">€0</span>
-        </div>
-        <div class="summary-divider" style="margin-top:8px"></div>
-        <div class="summary-row" style="margin-top:8px">
-          <span class="summary-row-label" style="color:var(--text);font-size:13px">Net cost to hosts</span>
-          <span id="sr-net" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--gold-light)">€0</span>
-        </div>
-        <div style="font-size:10px;color:var(--text-dim);margin-top:4px;text-align:right" id="sr-net-perhost">— per host (3 of you)</div>
-      </div>
-    </div>
-
-    <div class="confidence-bar"><div class="confidence-fill" id="conf-fill" style="width:60%"></div></div>
-
-    <div class="notes-section">
-      <div class="notes-title">Pricing sources</div>
-      <div class="note">Food prices anchored to 1001 Nuits 2026 brochure: Tajine Party €39pp, Menu Signature €55pp, Mechoui €59pp.</div>
-      <div class="note">Soft drinks open bar is a fixed charge — 1001 Nuits list €10/day/person for unlimited water, sodas, tea, coffee.</div>
-      <div class="note">Transport from 1001 Nuits: 17-seat minibus €120 single trip, €240 full evening. Airport runs charged separately.</div>
-      <div class="note">Entertainment refs: DJ €700 (9pm–2am), belly dancer €300, fire eater €290, Dakka musicians €250.</div>
-      <div class="note">All figures in EUR · 1 EUR ≈ 10.8 MAD · ≈ £0.85</div>
+    <div class="gf">
+      <label>Currency</label>
+      <select id="currency" onchange="update()">
+        <option value="EUR">€ EUR</option>
+        <option value="GBP">£ GBP</option>
+        <option value="MAD">MAD</option>
+      </select>
     </div>
   </div>
+
+  <!-- FOOD -->
+  <div class="card" id="card-food">
+    <div class="card-head" onclick="toggleCard('food')">
+      <div class="card-head-l"><span class="card-icon">🍽</span><span class="card-title">Food &amp; Catering</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-food">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+
+      <div class="day-head">Friday · Arrival</div>
+      <div class="li">
+        <div><div class="ll">Fri — Dinner <span class="vg">villa pax</span></div><div class="ln">Villa guests only · €30pp Mãdero buffet or self-cater</div></div>
+        <input class="linput" type="number" id="fri-dinner-pp" value="30" min="0" oninput="update()">
+        <span class="lc hi" id="fri-dinner-total">€0</span>
+      </div>
+
+      <div class="day-head">Saturday · Party Day</div>
+      <div class="li">
+        <div><div class="ll">Sat — Lunch <span class="vg">villa pax</span></div><div class="ln">Villa guests only · pre-party</div></div>
+        <input class="linput" type="number" id="sat-lunch-pp" value="30" min="0" oninput="update()">
+        <span class="lc hi" id="sat-lunch-total">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Sat — Party Buffet <span class="ph">all guests</span></div><div class="ln">All ~100 guests · main event catering · Moroccan feast</div></div>
+        <input class="linput" type="number" id="sat-buffet-pp" value="30" min="0" oninput="update()">
+        <span class="lc hi" id="sat-buffet-total">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Sat — Canapés / welcome bites <span class="ph">all guests</span></div><div class="ln">Arrival nibbles for party guests</div></div>
+        <input class="linput" type="number" id="canapes-pp" value="0" min="0" oninput="update()">
+        <span class="lc" id="canapes-total">€0</span>
+      </div>
+
+      <div class="day-head">Sunday · Recovery</div>
+      <div class="li">
+        <div><div class="ll">Sun — BBQ <span class="vg">villa pax</span></div><div class="ln" id="sun-bbq-note">Villa guests · €18pp ref from Marco · adjust as needed</div></div>
+        <input class="linput" type="number" id="sun-bbq-pp" value="18" min="0" oninput="update()">
+        <span class="lc hi" id="sun-bbq-total">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Sun — Dinner <span class="vg">villa pax</span></div><div class="ln">Villa guests only · €30pp Mãdero buffet or self-cater</div></div>
+        <input class="linput" type="number" id="sun-dinner-pp" value="30" min="0" oninput="update()">
+        <span class="lc hi" id="sun-dinner-total">€0</span>
+      </div>
+
+      <div class="day-head">Breakfast · Fri / Sat / Sun</div>
+      <div class="li" id="breakfast-line">
+        <div><div class="ll">Breakfast × 3 days <span class="vg">villa pax</span></div><div class="ln" id="breakfast-note">€10pp quoted · included in Mãdero base price</div></div>
+        <input class="linput" type="number" id="breakfast-pp" value="10" min="0" oninput="update()">
+        <span class="lc" id="breakfast-total">€0</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DRINKS -->
+  <div class="card" id="card-drinks">
+    <div class="card-head" onclick="toggleCard('drinks')">
+      <div class="card-head-l"><span class="card-icon">🍾</span><span class="card-title">Alcohol &amp; Bar</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-drinks">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+      <div class="li">
+        <div><div class="ll">Wine <span class="ph">per head</span></div><div class="ln">Moroccan labels (Baccari, Tandem, CB…)</div></div>
+        <input class="linput" type="number" id="wine-pp" value="10" min="0" oninput="update()">
+        <span class="lc hi" id="wine-total">€0</span>
+      </div>
+      <div class="btl" id="wine-breakdown"></div>
+      <div class="li">
+        <div><div class="ll">Spirits <span class="ph">per head</span></div><div class="ln">Gin, vodka, rum, whisky</div></div>
+        <input class="linput" type="number" id="spirits-pp" value="10" min="0" oninput="update()">
+        <span class="lc hi" id="spirits-total">€0</span>
+      </div>
+      <div class="btl" id="spirits-breakdown"></div>
+      <div class="li">
+        <div><div class="ll">Beer <span class="ph">per head</span></div><div class="ln">Flag Special Gold / Casablanca</div></div>
+        <input class="linput" type="number" id="beer-pp" value="5" min="0" oninput="update()">
+        <span class="lc hi" id="beer-total">€0</span>
+      </div>
+      <div class="btl" id="beer-breakdown"></div>
+      <div class="li">
+        <div><div class="ll">Soft drinks &amp; mixers <span class="ph">per head</span></div><div class="ln">Tonic, juice, water, cola</div></div>
+        <input class="linput" type="number" id="soft-pp" value="4" min="0" oninput="update()">
+        <span class="lc" id="soft-total">€0</span>
+      </div>
+      <div class="divider"></div>
+      <div class="li">
+        <div><div class="ll">Bar staff (×2 bartenders)</div><div class="ln">External hire for the night</div></div>
+        <input class="linput" type="number" id="barstaff" value="500" min="0" oninput="update()">
+        <span class="lc" id="barstaff-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Ice, garnishes, cups</div><div class="ln">Ice bags / machine rental</div></div>
+        <input class="linput" type="number" id="ice" value="200" min="0" oninput="update()">
+        <span class="lc" id="ice-display">€0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MUSIC -->
+  <div class="card" id="card-music">
+    <div class="card-head" onclick="toggleCard('music')">
+      <div class="card-head-l"><span class="card-icon">🎵</span><span class="card-title">Music &amp; Entertainment</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-music">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+      <div class="li">
+        <div><div class="ll">DJ (main night)</div><div class="ln">Friends DJing · €700 if hiring externally</div></div>
+        <input class="linput" type="number" id="dj" value="0" min="0" oninput="update()">
+        <span class="lc" id="dj-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">PA / sound system hire</div><div class="ln">Outdoor system · check villa provision</div></div>
+        <input class="linput" type="number" id="pa" value="0" min="0" oninput="update()">
+        <span class="lc" id="pa-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Lighting / uplighters</div><div class="ln">Event lighting hire</div></div>
+        <input class="linput" type="number" id="lighting" value="500" min="0" oninput="update()">
+        <span class="lc" id="lighting-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Entertainment (acts)</div><div class="ln">Belly dancer €300 · fire eater €290 · Dakka musicians €250</div></div>
+        <input class="linput" type="number" id="entertainment" value="0" min="0" oninput="update()">
+        <span class="lc" id="entertainment-display">€0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECOR -->
+  <div class="card" id="card-decor">
+    <div class="card-head" onclick="toggleCard('decor')">
+      <div class="card-head-l"><span class="card-icon">🌿</span><span class="card-title">Decoration &amp; Styling</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-decor">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+      <div class="li">
+        <div><div class="ll">Table linens &amp; crockery hire</div><div class="ln">If not included with caterer</div></div>
+        <input class="linput" type="number" id="linens" value="0" min="0" oninput="update()">
+        <span class="lc" id="linens-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Decorate indoor room</div><div class="ln">Rugs, poufs, draping, lighting · overnight space</div></div>
+        <input class="linput" type="number" id="berber" value="0" min="0" oninput="update()">
+        <span class="lc" id="berber-display">€0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRANSPORT -->
+  <div class="card" id="card-transport">
+    <div class="card-head" onclick="toggleCard('transport')">
+      <div class="card-head-l"><span class="card-icon">🚌</span><span class="card-title">Transport &amp; Transfers</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-transport">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+      <div class="li">
+        <div><div class="ll">Full day car hire</div><div class="ln">€250 per vehicle · full day</div></div>
+        <input class="linput" type="number" id="car-hire" value="250" min="0" oninput="update()">
+        <span class="lc" id="car-hire-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Party night shuttle</div><div class="ln">17-seat van full evening (7pm–3am) = €240 each</div></div>
+        <input class="linput" type="number" id="party-transport" value="480" min="0" oninput="update()">
+        <span class="lc" id="party-transport-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Daytime excursion transport</div><div class="ln">Optional group trip</div></div>
+        <input class="linput" type="number" id="medina-trip" value="0" min="0" oninput="update()">
+        <span class="lc" id="medina-trip-display">€0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MISC -->
+  <div class="card" id="card-misc">
+    <div class="card-head" onclick="toggleCard('misc')">
+      <div class="card-head-l"><span class="card-icon">⚡</span><span class="card-title">Logistics &amp; Contingency</span></div>
+      <div style="display:flex;align-items:center;gap:16px"><span class="card-sub" id="sub-misc">€0</span><span class="card-toggle">▾</span></div>
+    </div>
+    <div class="card-body">
+      <div class="li">
+        <div><div class="ll">Event / outdoor licence fee</div><div class="ln" id="licence-note">Marco: €450 incl. in base · Mãdero: no supplement</div></div>
+        <input class="linput" type="number" id="eventfee" value="0" min="0" oninput="update()">
+        <span class="lc" id="eventfee-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Door security (×1)</div><div class="ln">Optional · 1 person on entrance</div></div>
+        <input class="linput" type="number" id="security" value="0" min="0" oninput="update()">
+        <span class="lc" id="security-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Agency / coordination fee</div><div class="ln" id="agency-note">Marco: €250 incl. in base · Mãdero: none</div></div>
+        <input class="linput" type="number" id="agency" value="0" min="0" oninput="update()">
+        <span class="lc" id="agency-display">€0</span>
+      </div>
+      <div class="li">
+        <div><div class="ll">Contingency (unforeseen)</div><div class="ln">Recommended: 8–10% of total</div></div>
+        <input class="linput" type="number" id="contingency" value="0" min="0" oninput="update()">
+        <span class="lc" id="contingency-display">€0</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /controls-col -->
+
+<!-- SUMMARY -->
+<div class="summary">
+  <div class="sum-head">
+    <div class="sum-ey">Extras · <span id="active-villa-name">Villa Mãdero</span></div>
+    <div class="sum-total"><span id="total-display">€0</span></div>
+    <div class="sum-sub"><span id="per-head-display">—</span> per party guest</div>
+  </div>
+
+  <div class="sum-rows">
+    <div class="sr" id="sr-food"><span class="sr-l">🍽 Food &amp; Catering</span><span class="sr-v">€0</span></div>
+    <div class="sr" id="sr-drinks"><span class="sr-l">🍾 Alcohol &amp; Bar</span><span class="sr-v">€0</span></div>
+    <div class="sr" id="sr-music"><span class="sr-l">🎵 Music &amp; Entertainment</span><span class="sr-v">€0</span></div>
+    <div class="sr" id="sr-decor"><span class="sr-l">🌿 Decoration &amp; Styling</span><span class="sr-v">€0</span></div>
+    <div class="sr" id="sr-transport"><span class="sr-l">🚌 Transport</span><span class="sr-v">€0</span></div>
+    <div class="sr" id="sr-misc"><span class="sr-l">⚡ Logistics</span><span class="sr-v">€0</span></div>
+    <div class="sdiv"></div>
+    <div class="sr">
+      <span class="sr-l" style="color:var(--text)">Extras subtotal</span>
+      <span class="sr-v" style="color:var(--gold-light);font-size:15px" id="sr-extras">€0</span>
+    </div>
+    <div class="sdiv" style="margin-top:4px"></div>
+    <div style="margin-top:2px">
+      <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:8px">Guest Contribution</div>
+      <div class="sr" style="align-items:center;gap:8px">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <span class="sr-l">Amount per guest</span>
+          <span style="font-size:9px;color:var(--text-dim);opacity:0.6">× <span id="contrib-guest-count">100</span> guests</span>
+        </div>
+        <input type="number" id="contrib-pp" value="0" min="0"
+          style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'DM Mono',monospace;font-size:13px;padding:5px 8px;width:80px;text-align:right;"
+          oninput="update()">
+      </div>
+      <div class="sr" style="margin-top:6px">
+        <span class="sr-l">Total contribution</span>
+        <span class="sr-v" style="color:var(--green)" id="sr-contrib">€0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VILLA COMPARISON -->
+  <div class="vc-box">
+    <div class="vc-title">All-in · villa base + extras</div>
+    <div class="vc-row" id="comp-madero">
+      <div>
+        <div class="vc-name m">Villa Mãdero <span class="apill" id="madero-pill" style="display:none">active</span></div>
+        <div class="vc-detail">€6,600 base · breakfast incl.</div>
+        <div class="vc-save" id="madero-saving"></div>
+      </div>
+      <div>
+        <div class="vc-amt" id="madero-allin">—</div>
+        <div class="vc-net" id="madero-net"></div>
+      </div>
+    </div>
+    <div class="vc-row" id="comp-marco">
+      <div>
+        <div class="vc-name k">Villa Marco <span class="apill" id="marco-pill" style="display:none">active</span></div>
+        <div class="vc-detail">€13,408 base · bkfast + BBQ + licence incl.</div>
+        <div class="vc-save" id="marco-saving"></div>
+      </div>
+      <div>
+        <div class="vc-amt" id="marco-allin">—</div>
+        <div class="vc-net" id="marco-net"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="net-block">
+    <div class="net-ey">Net cost to hosts (active villa)</div>
+    <div class="net-row">
+      <span class="net-total" id="sr-net">€0</span>
+      <span class="net-perhost" id="sr-net-perhost">— per host</span>
+    </div>
+  </div>
+
+  <div class="conf-bar"><div class="conf-fill" style="width:60%"></div></div>
+
+  <div class="notes">
+    <div class="notes-t">Sources</div>
+    <div class="note">Mãdero (Stefano quote): €6,600 · 3 nights · 22 rooms · 44 pax · breakfast incl. · BYO alcohol free.</div>
+    <div class="note">Marco (Exclusives Horizons): €13,408 total — inc. breakfast €1,380, Sunday BBQ €828, outdoor licence €450, agency €250.</div>
+    <div class="note">Mãdero buffet option: €30pp · 3 starters + 3 mains + 2 desserts · soft drinks included.</div>
+    <div class="note">Alcohol BYO free at both villas. CDS refs: wine avg €18.5/btl, spirits avg €41.7/btl, beer (Flag 25cl) €1.51/btl.</div>
+    <div class="note">All figures EUR · 1 EUR ≈ 10.8 MAD · ≈ £0.85</div>
+  </div>
+</div>
 
 </div><!-- /layout -->
 
 <script>
-const FX = { EUR: 1, GBP: 0.85, MAD: 10.8 };
-const SYM = { EUR: '€', GBP: '£', MAD: 'MAD ' };
+const FX  = { EUR:1, GBP:0.85, MAD:10.8 };
+const SYM = { EUR:'€', GBP:'£', MAD:'MAD ' };
 
-function g(id) { return parseFloat(document.getElementById(id).value) || 0; }
-function s(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+const VILLA = {
+  madero: { base:6600,  bkfastIncl:true,  bbqIncl:false, name:'Villa Mãdero' },
+  marco:  { base:13408, bkfastIncl:true,   bbqIncl:true,  name:'Villa Marco'  }
+};
 
+let activeVilla = 'madero';
+
+function setVilla(v) {
+  activeVilla = v;
+  ['madero','marco'].forEach(x => {
+    const t = document.getElementById('tab-'+x);
+    t.className = 'villa-tab' + (x===v ? ' sel-'+x : '');
+    t.querySelector('.vtab-badge').textContent = x===v ? 'Selected' : 'Alternative';
+  });
+
+  // Breakfast: included in base for both, so always disabled / 0 extra
+  const bIn = document.getElementById('breakfast-pp');
+  bIn.disabled = true;
+  bIn.value = 0;
+  document.getElementById('breakfast-note').textContent =
+    v==='madero' ? 'Included in Mãdero base price' : 'Included in Marco base price (€10pp × 46 × 3)';
+  document.getElementById('breakfast-total').className = 'lc incl';
+  document.getElementById('breakfast-total').textContent = '✓ incl.';
+
+  // Sunday BBQ: included in Marco base, editable at Mãdero
+  const bbqIn = document.getElementById('sun-bbq-pp');
+  const bbqTot = document.getElementById('sun-bbq-total');
+  if (v==='marco') {
+    bbqIn.value = 0; bbqIn.disabled = true;
+    bbqTot.className = 'lc incl';
+    document.getElementById('sun-bbq-note').textContent = 'Included in Marco base price (€18 × 46 pax)';
+  } else {
+    bbqIn.value = 18; bbqIn.disabled = false;
+    bbqTot.className = 'lc hi';
+    document.getElementById('sun-bbq-note').textContent = 'Villa guests · €18pp ref from Marco · adjust as needed';
+  }
+
+  document.getElementById('active-villa-name').textContent = VILLA[v].name;
+  update();
+}
+
+function g(id) { return parseFloat(document.getElementById(id)?.value)||0; }
+function s(id,val) { const e=document.getElementById(id); if(e) e.textContent=val; }
 function fmt(eur) {
-  const cur = document.getElementById('currency').value;
-  const val = eur * FX[cur];
-  const sym = SYM[cur];
-  if (cur === 'MAD') return sym + Math.round(val).toLocaleString();
-  return sym + Math.round(val).toLocaleString();
+  const c=document.getElementById('currency').value;
+  return SYM[c]+Math.round(eur*FX[c]).toLocaleString();
 }
-
-function toggleCard(name) {
-  const card = document.getElementById('card-' + name);
-  card.classList.toggle('collapsed');
-}
+function toggleCard(n){ document.getElementById('card-'+n).classList.toggle('collapsed'); }
 
 function update() {
-  const n = g('guests');
+  const n  = g('guests');
+  const vg = g('villa-guests');
   document.getElementById('guests-val').textContent = n;
+  document.getElementById('villa-guests-val').textContent = vg;
 
   // FOOD
-  const villaGuests = g('villa-guests');
-  s('villa-guests-food', villaGuests);
-  s('villa-guests-food2', villaGuests);
-  s('villa-guests-food3', villaGuests);
-  document.getElementById('villa-guests-val').textContent = villaGuests;
+  const friDinner  = g('fri-dinner-pp') * vg;
+  const satLunch   = g('sat-lunch-pp') * vg;
+  const satBuffet  = g('sat-buffet-pp') * n;
+  const canapes    = g('canapes-pp') * n;
+  const sunBbq     = g('sun-bbq-pp') * vg;   // 0 if Marco (disabled)
+  const sunDinner  = g('sun-dinner-pp') * vg;
+  const food       = friDinner + satLunch + satBuffet + canapes + sunBbq + sunDinner;
 
-  const buffet = g('buffet-pp') * n;
-  const canapes = g('canapes-pp') * n;
-  const breakfast = g('breakfast-pp') * villaGuests;
-  const lunch = g('lunch-pp') * villaGuests;
-  const dinner = g('dinner-pp') * villaGuests;
-  const food = buffet + canapes + breakfast + lunch + dinner;
-
-  s('buffet-total', fmt(buffet));
-  s('canapes-total', fmt(canapes));
-  s('breakfast-total', fmt(breakfast));
-  s('lunch-total', fmt(lunch));
-  s('dinner-total', fmt(dinner));
+  s('fri-dinner-total',  fmt(friDinner));
+  s('sat-lunch-total',   fmt(satLunch));
+  s('sat-buffet-total',  fmt(satBuffet));
+  s('canapes-total',     fmt(canapes));
+  if (activeVilla!=='marco') s('sun-bbq-total', fmt(sunBbq));
+  s('sun-dinner-total',  fmt(sunDinner));
   s('sub-food', fmt(food));
 
   // DRINKS
-  const wine = g('wine-pp') * n;
+  const wine    = g('wine-pp')    * n;
   const spirits = g('spirits-pp') * n;
-  const beer = g('beer-pp') * n;
-  const soft = g('soft-pp') * n;
-  const barstaff = g('barstaff');
-  const ice = g('ice');
-  const corkage = g('corkage-pp') * n;
-  const drinks = wine + spirits + beer + soft + barstaff + ice + corkage;
+  const beer    = g('beer-pp')    * n;
+  const soft    = g('soft-pp')    * n;
+  const bstaff  = g('barstaff');
+  const ice     = g('ice');
+  const drinks  = wine+spirits+beer+soft+bstaff+ice;
 
-  s('wine-total', fmt(wine));
-  s('spirits-total', fmt(spirits));
-  s('beer-total', fmt(beer));
-  s('soft-total', fmt(soft));
-  s('barstaff-display', fmt(barstaff));
-  s('ice-display', fmt(ice));
-  s('corkage-total', fmt(corkage));
-  s('sub-drinks', fmt(drinks));
+  s('wine-total',       fmt(wine));
+  s('spirits-total',    fmt(spirits));
+  s('beer-total',       fmt(beer));
+  s('soft-total',       fmt(soft));
+  s('barstaff-display', fmt(bstaff));
+  s('ice-display',      fmt(ice));
+  s('sub-drinks',       fmt(drinks));
 
-  // Bottle breakdowns — CDS price references (MAD → EUR at 10.8)
-  // Wine: avg Moroccan mid-tier bottle ~200 MAD = €18.5
-  const WINE_BTL = 18.5;
-  const wineBottles = wine > 0 ? Math.round(wine / WINE_BTL) : 0;
-  document.getElementById('wine-breakdown').innerHTML = wine > 0
-    ? `→ <span>${wineBottles} bottles</span> @ avg <span>${fmt(WINE_BTL)}</span>/bottle &nbsp;·&nbsp; ~<span>${(wineBottles/n).toFixed(1)}</span> bottles per guest`
-    : '';
-
-  // Spirits: avg CDS mid-tier 70cl ~450 MAD = €41.7 (Gordon's, Havana, Absolut tier)
-  const SPIRIT_BTL = 41.7;
-  const spiritBottles = spirits > 0 ? Math.round(spirits / SPIRIT_BTL) : 0;
-  document.getElementById('spirits-breakdown').innerHTML = spirits > 0
-    ? `→ <span>${spiritBottles} bottles</span> @ avg <span>${fmt(SPIRIT_BTL)}</span>/bottle &nbsp;·&nbsp; serves ~<span>${spiritBottles * 20}</span> measures`
-    : '';
-
-  // Beer: Flag Special Gold 25cl x6 = 98 MAD = €9.07 per 6-pack → €1.51/bottle
-  const BEER_BTL = 1.51; // per bottle
-  const beerBottles = beer > 0 ? Math.round(beer / BEER_BTL) : 0;
-  document.getElementById('beer-breakdown').innerHTML = beer > 0
-    ? `→ <span>${beerBottles} bottles</span> @ avg <span>${fmt(BEER_BTL)}</span>/bottle (Flag 25cl) &nbsp;·&nbsp; ~<span>${Math.round(beerBottles/n)}</span> per guest`
-    : '';
+  const W=18.5, wb=wine>0?Math.round(wine/W):0;
+  document.getElementById('wine-breakdown').innerHTML = wine>0
+    ? `→ <span>${wb} btls</span> @ <span>${fmt(W)}</span>/btl &nbsp;·&nbsp; ~<span>${(wb/n).toFixed(1)}</span>/guest` : '';
+  const S=41.7, sb=spirits>0?Math.round(spirits/S):0;
+  document.getElementById('spirits-breakdown').innerHTML = spirits>0
+    ? `→ <span>${sb} btls</span> @ <span>${fmt(S)}</span>/btl &nbsp;·&nbsp; ~<span>${sb*20}</span> measures` : '';
+  const B=1.51, bb=beer>0?Math.round(beer/B):0;
+  document.getElementById('beer-breakdown').innerHTML = beer>0
+    ? `→ <span>${bb} btls</span> @ <span>${fmt(B)}</span>/btl (Flag 25cl) &nbsp;·&nbsp; ~<span>${Math.round(bb/n)}</span>/guest` : '';
 
   // MUSIC
-  const dj = g('dj');
-  const pa = g('pa');
-  const lights = g('lighting');
-  const music = dj + pa + lights;
-
-  s('dj-display', fmt(dj));
-  s('pa-display', fmt(pa));
-  s('lighting-display', fmt(lights));
-  s('sub-music', fmt(music));
+  const dj=g('dj'), pa=g('pa'), lights=g('lighting'), ent=g('entertainment');
+  const music=dj+pa+lights+ent;
+  s('dj-display',fmt(dj)); s('pa-display',fmt(pa)); s('lighting-display',fmt(lights)); s('entertainment-display',fmt(ent));
+  s('sub-music',fmt(music));
 
   // DECOR
-  const linens = g('linens');
-  const berber = g('berber');
-  const decor = linens + berber;
-
-  s('linens-display', fmt(linens));
-  s('berber-display', fmt(berber));
-  s('sub-decor', fmt(decor));
+  const linens=g('linens'), berber=g('berber'), decor=linens+berber;
+  s('linens-display',fmt(linens)); s('berber-display',fmt(berber)); s('sub-decor',fmt(decor));
 
   // TRANSPORT
-  const carHire = g('airport-in');
-  const partyT = g('party-transport');
-  const medina = g('medina-trip');
-  const transport = carHire + partyT + medina;
-
-  s('airport-in-display', fmt(carHire));
-  s('party-transport-display', fmt(partyT));
-  s('medina-trip-display', fmt(medina));
-  s('sub-transport', fmt(transport));
+  const car=g('car-hire'), party=g('party-transport'), med=g('medina-trip');
+  const transport=car+party+med;
+  s('car-hire-display',fmt(car)); s('party-transport-display',fmt(party)); s('medina-trip-display',fmt(med));
+  s('sub-transport',fmt(transport));
 
   // MISC
-  const eventfee = g('eventfee-pp') * n;
-  const security = g('security');
-  const softbar = g('softbar');
-  const contingency = g('contingency');
-  const misc = eventfee + security + softbar + contingency;
-
-  s('eventfee-total', fmt(eventfee));
-  s('security-display', fmt(security));
-  s('softbar-display', fmt(softbar));
-  s('contingency-display', fmt(contingency));
-  s('sub-misc', fmt(misc));
+  const ef=g('eventfee'), sec=g('security'), ag=g('agency'), cont=g('contingency');
+  const misc=ef+sec+ag+cont;
+  s('eventfee-display',fmt(ef)); s('security-display',fmt(sec)); s('agency-display',fmt(ag)); s('contingency-display',fmt(cont));
+  s('sub-misc',fmt(misc));
 
   // TOTALS
-  const total = food + drinks + music + decor + transport + misc;
-  const perHead = total / n;
-  const contrib = g('contrib-pp') * n;
-  const net = Math.max(0, total - contrib);
-  const perHost = net / 3;
+  const extras  = food+drinks+music+decor+transport+misc;
+  const contrib = g('contrib-pp')*n;
+  const extrasNet = Math.max(0, extras-contrib);
 
-  s('total-display', fmt(total));
-  s('per-head-display', fmt(perHead));
-  s('contrib-guest-count', n);
-  s('sr-contrib', fmt(contrib));
-  s('sr-net', fmt(net));
-  s('sr-net-perhost', contrib > 0 ? `${fmt(perHost)} per host (3 of you)` : '— per host (3 of you)');
+  s('total-display',      fmt(extras));
+  s('per-head-display',   fmt(n>0?extras/n:0));
+  s('contrib-guest-count',n);
+  s('sr-contrib',         fmt(contrib));
+  s('sr-extras',          fmt(extras));
+
+  // Active villa net
+  const activeBase = VILLA[activeVilla].base;
+  const allinActive = activeBase + extras;
+  const netActive = Math.max(0, allinActive - contrib);
+  s('sr-net',         fmt(netActive));
+  s('sr-net-perhost', fmt(netActive/3)+' per host (3 of you)');
+
+  // VILLA COMPARISON
+  const maderoAllin = VILLA.madero.base + extras;
+  const marcoAllin  = VILLA.marco.base  + extras;
+  const maderoNet   = Math.max(0, maderoAllin-contrib);
+  const marcoNet    = Math.max(0, marcoAllin-contrib);
+  const diff = marcoAllin - maderoAllin; // how much more Marco costs
+
+  s('madero-allin', fmt(maderoAllin));
+  s('marco-allin',  fmt(marcoAllin));
+  s('madero-net',   contrib>0 ? fmt(maderoNet)+' net of contrib' : '');
+  s('marco-net',    contrib>0 ? fmt(marcoNet)+' net of contrib'  : '');
+  s('madero-saving', diff>0 ? `saves ${fmt(diff)} vs Marco` : '');
+  s('marco-saving',  diff<0 ? `saves ${fmt(-diff)} vs Mãdero` : '');
+
+  document.getElementById('madero-pill').style.display = activeVilla==='madero'?'inline':'none';
+  document.getElementById('marco-pill').style.display  = activeVilla==='marco' ?'inline':'none';
+  document.getElementById('comp-madero').classList.toggle('active', activeVilla==='madero');
+  document.getElementById('comp-marco').classList.toggle('active',  activeVilla==='marco');
 
   // Summary rows
-  const rows = [
-    { id: 'sr-food', val: food },
-    { id: 'sr-drinks', val: drinks },
-    { id: 'sr-music', val: music },
-    { id: 'sr-decor', val: decor },
-    { id: 'sr-transport', val: transport },
-    { id: 'sr-misc', val: misc },
-  ];
-  rows.forEach(r => {
-    const el = document.getElementById(r.id);
-    el.querySelector('.summary-row-val').textContent = fmt(r.val);
-    el.classList.toggle('zero', r.val === 0);
-  });
-  s('sr-total', fmt(total));
+  [['sr-food',food],['sr-drinks',drinks],['sr-music',music],['sr-decor',decor],['sr-transport',transport],['sr-misc',misc]]
+    .forEach(([id,val])=>{
+      const el=document.getElementById(id);
+      el.querySelector('.sr-v').textContent=fmt(val);
+      el.classList.toggle('zero',val===0);
+    });
 }
 
-update();
+setVilla('madero');
 </script>
 </body>
 </html>
