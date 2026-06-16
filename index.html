@@ -292,8 +292,13 @@
     <div class="global-bar">
       <div class="global-field">
         <label>Guests</label>
-        <input type="range" id="guests" min="60" max="130" value="90" step="5" oninput="update()">
-        <span class="val-display"><span id="guests-val">90</span> guests</span>
+        <input type="range" id="guests" min="60" max="130" value="100" step="5" oninput="update()">
+        <span class="val-display"><span id="guests-val">100</span> guests</span>
+      </div>
+      <div class="global-field">
+        <label>Villa Guests</label>
+        <input type="range" id="villa-guests" min="10" max="40" value="20" step="2" oninput="update()">
+        <span class="val-display"><span id="villa-guests-val">20</span> staying</span>
       </div>
       <div class="global-field">
         <label>Currency</label>
@@ -320,8 +325,8 @@
       <div class="card-body">
         <div class="line-item">
           <div>
-            <div class="line-label">Buffet dinner <span class="per-head-tag">per head</span></div>
-            <div class="line-note">External caterer · Moroccan feast style</div>
+            <div class="line-label">Saturday buffet <span class="per-head-tag">per head</span></div>
+            <div class="line-note">All 100 guests · External caterer · Moroccan feast style</div>
           </div>
           <input class="line-input" type="number" id="buffet-pp" value="25" min="0" oninput="update()">
           <span class="line-computed highlighted" id="buffet-total">€2,250</span>
@@ -336,20 +341,27 @@
         </div>
         <div class="line-item">
           <div>
-            <div class="line-label">Late night food <span class="per-head-tag">per head</span></div>
-            <div class="line-note">Tagines / snacks post-midnight</div>
+            <div class="line-label">Breakfast <span class="per-head-tag">per head</span></div>
+            <div class="line-note">Villa guests only · <span id="villa-guests-food">20</span> staying</div>
           </div>
-          <input class="line-input" type="number" id="latenight-pp" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="latenight-total">€0</span>
+          <input class="line-input" type="number" id="breakfast-pp" value="60" min="0" oninput="update()">
+          <span class="line-computed highlighted" id="breakfast-total">€0</span>
         </div>
-        <div class="divider"></div>
         <div class="line-item">
           <div>
-            <div class="line-label">Staff service charge</div>
-            <div class="line-note">Caterer's servers, setup, breakdown</div>
+            <div class="line-label">Lunch <span class="per-head-tag">per head</span></div>
+            <div class="line-note">Villa guests only · <span id="villa-guests-food2">20</span> staying</div>
           </div>
-          <input class="line-input" type="number" id="catering-service" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="catering-service-display">€0</span>
+          <input class="line-input" type="number" id="lunch-pp" value="60" min="0" oninput="update()">
+          <span class="line-computed highlighted" id="lunch-total">€0</span>
+        </div>
+        <div class="line-item">
+          <div>
+            <div class="line-label">Dinner <span class="per-head-tag">per head</span></div>
+            <div class="line-note">Villa guests only · <span id="villa-guests-food3">20</span> staying</div>
+          </div>
+          <input class="line-input" type="number" id="dinner-pp" value="60" min="0" oninput="update()">
+          <span class="line-computed highlighted" id="dinner-total">€0</span>
         </div>
       </div>
     </div>
@@ -492,22 +504,6 @@
       <div class="card-body">
         <div class="line-item">
           <div>
-            <div class="line-label">Flowers &amp; botanicals</div>
-            <div class="line-note">Sourced locally · souk prices</div>
-          </div>
-          <input class="line-input" type="number" id="flowers" value="500" min="0" oninput="update()">
-          <span class="line-computed" id="flowers-display">€600</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Candles, lanterns, draping</div>
-            <div class="line-note">Moroccan style · buy or hire</div>
-          </div>
-          <input class="line-input" type="number" id="candles" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="candles-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
             <div class="line-label">Table linens &amp; crockery hire</div>
             <div class="line-note">If not included with caterer</div>
           </div>
@@ -516,8 +512,8 @@
         </div>
         <div class="line-item">
           <div>
-            <div class="line-label">Berber tent setup</div>
-            <div class="line-note">Rugs, poufs, braziers, lighting · €400 via 1001 Nuits</div>
+            <div class="line-label">Decorate indoor room</div>
+            <div class="line-note">Rugs, poufs, draping, lighting · overnight continuation space</div>
           </div>
           <input class="line-input" type="number" id="berber" value="0" min="0" oninput="update()">
           <span class="line-computed" id="berber-display">€0</span>
@@ -540,19 +536,11 @@
       <div class="card-body">
         <div class="line-item">
           <div>
-            <div class="line-label">Airport transfers (arrival)</div>
-            <div class="line-note">17-seat minibus = €120/run · how many runs?</div>
+            <div class="line-label">Full day car hire (×1)</div>
+            <div class="line-note">€250 per vehicle · full day</div>
           </div>
-          <input class="line-input" type="number" id="airport-in" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="airport-in-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Airport transfers (departure)</div>
-            <div class="line-note">17-seat minibus = €120/run</div>
-          </div>
-          <input class="line-input" type="number" id="airport-out" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="airport-out-display">€0</span>
+          <input class="line-input" type="number" id="airport-in" value="250" min="0" oninput="update()">
+          <span class="line-computed" id="airport-in-display">€250</span>
         </div>
         <div class="line-item">
           <div>
@@ -609,14 +597,6 @@
           </div>
           <input class="line-input" type="number" id="softbar" value="0" min="0" oninput="update()">
           <span class="line-computed" id="softbar-display">€0</span>
-        </div>
-        <div class="line-item">
-          <div>
-            <div class="line-label">Photo booth</div>
-            <div class="line-note">Optional · €700 via 1001 Nuits · great for a 50th</div>
-          </div>
-          <input class="line-input" type="number" id="photobooth" value="0" min="0" oninput="update()">
-          <span class="line-computed" id="photobooth-display">€0</span>
         </div>
         <div class="line-item">
           <div>
@@ -718,16 +698,24 @@ function update() {
   document.getElementById('guests-val').textContent = n;
 
   // FOOD
+  const villaGuests = g('villa-guests');
+  s('villa-guests-food', villaGuests);
+  s('villa-guests-food2', villaGuests);
+  s('villa-guests-food3', villaGuests);
+  document.getElementById('villa-guests-val').textContent = villaGuests;
+
   const buffet = g('buffet-pp') * n;
   const canapes = g('canapes-pp') * n;
-  const latenight = g('latenight-pp') * n;
-  const catSvc = g('catering-service');
-  const food = buffet + canapes + latenight + catSvc;
+  const breakfast = g('breakfast-pp') * villaGuests;
+  const lunch = g('lunch-pp') * villaGuests;
+  const dinner = g('dinner-pp') * villaGuests;
+  const food = buffet + canapes + breakfast + lunch + dinner;
 
   s('buffet-total', fmt(buffet));
   s('canapes-total', fmt(canapes));
-  s('latenight-total', fmt(latenight));
-  s('catering-service-display', fmt(catSvc));
+  s('breakfast-total', fmt(breakfast));
+  s('lunch-total', fmt(lunch));
+  s('dinner-total', fmt(dinner));
   s('sub-food', fmt(food));
 
   // DRINKS
@@ -783,27 +771,21 @@ function update() {
   s('sub-music', fmt(music));
 
   // DECOR
-  const flowers = g('flowers');
-  const candles = g('candles');
   const linens = g('linens');
   const berber = g('berber');
-  const decor = flowers + candles + linens + berber;
+  const decor = linens + berber;
 
-  s('flowers-display', fmt(flowers));
-  s('candles-display', fmt(candles));
   s('linens-display', fmt(linens));
   s('berber-display', fmt(berber));
   s('sub-decor', fmt(decor));
 
   // TRANSPORT
-  const airIn = g('airport-in');
-  const airOut = g('airport-out');
+  const carHire = g('airport-in');
   const partyT = g('party-transport');
   const medina = g('medina-trip');
-  const transport = airIn + airOut + partyT + medina;
+  const transport = carHire + partyT + medina;
 
-  s('airport-in-display', fmt(airIn));
-  s('airport-out-display', fmt(airOut));
+  s('airport-in-display', fmt(carHire));
   s('party-transport-display', fmt(partyT));
   s('medina-trip-display', fmt(medina));
   s('sub-transport', fmt(transport));
@@ -812,14 +794,12 @@ function update() {
   const eventfee = g('eventfee-pp') * n;
   const security = g('security');
   const softbar = g('softbar');
-  const photobooth = g('photobooth');
   const contingency = g('contingency');
-  const misc = eventfee + security + softbar + photobooth + contingency;
+  const misc = eventfee + security + softbar + contingency;
 
   s('eventfee-total', fmt(eventfee));
   s('security-display', fmt(security));
   s('softbar-display', fmt(softbar));
-  s('photobooth-display', fmt(photobooth));
   s('contingency-display', fmt(contingency));
   s('sub-misc', fmt(misc));
 
